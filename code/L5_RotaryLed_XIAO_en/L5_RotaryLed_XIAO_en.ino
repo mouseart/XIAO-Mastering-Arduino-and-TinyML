@@ -1,0 +1,28 @@
+#define ROTARY_ANGLE_SENSOR A0 //Define rotary potentiometer interface A0
+#define LEDPIN 13 //Define LED interface 13
+#define ADC_REF 3 //Reference voltage 3V
+#define GROVE_VCC 3 //GROVE reference voltage 3V
+#define FULL_ANGLE 300 //The maximum rotation angle of the rotary potentiometer is 300°
+ 
+void setup()
+{
+    Serial.begin(9600); //Initialize serial communication
+    pinMode(ROTARY_ANGLE_SENSOR, INPUT); //Set the rotary potentiometer pin to input
+    pinMode(LEDPIN,OUTPUT); //Set the LED pin to output 
+}
+ 
+void loop()
+{   
+    float voltage; //Variable voltage of type float
+    int sensor_value = analogRead(ROTARY_ANGLE_SENSOR); //Read the analog value at the rotary potentiometer pin
+    voltage = (float)sensor_value*ADC_REF/1023; //Calculate the real-time voltage
+    float degrees = (voltage*FULL_ANGLE)/GROVE_VCC; //Calculate the angle of rotation of the knob
+    Serial.println("The angle between the mark and the starting position:"); //Print character on serial monitor
+    Serial.println(degrees); //Print the rotation angle value of the rotary potentiometer on the serial monitor
+    delay(100);
+    
+    int brightness; //Define brightness variable
+    brightness = map(degrees, 0, FULL_ANGLE, 0, 255); //Map the rotation angle value of the rotary potentiometer to the brightness value of the LED and store it in the brightness variable
+    analogWrite(LEDPIN,brightness); //Output the variable value to the LED
+    delay(500);
+}

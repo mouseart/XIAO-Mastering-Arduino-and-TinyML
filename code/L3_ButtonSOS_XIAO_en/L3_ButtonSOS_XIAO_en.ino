@@ -1,22 +1,29 @@
 /*
- * Button-SOS
+ * Button-Controlled Buzzer
  */
-const int buttonPin = 1; // The button is on pin 1, if you are using XIAO RP2040/XIAO ESP32, please change 1 to D1!
-int pinBuzzer = 3; // The buzzer is on pin 3, if you are using XIAO RP2040/XIAO ESP32, please change 3 to A3!
+const int buttonPin = 1;    // Button is connected to pin 1; adjust for your board (e.g., D1 for XIAO RP2040/XIAO ESP32)
+int buzzerPin = 3;         // Buzzer is connected to pin 3; adjust for your board (e.g., A3 for XIAO RP2040/XIAO ESP32)
+
 void setup() {
-  // Set the buzzer pin as output:
-  pinMode(pinBuzzer, OUTPUT);
-  // Set the button pin as input:
+  // Set the buzzer pin as an output
+  pinMode(buzzerPin, OUTPUT);
+  // Configure the button pin as input with internal pull-up resistor
   pinMode(buttonPin, INPUT_PULLUP);
 }
- 
+
 void loop() {
-  // buttonState is the button variable, read the button state and store it in the variable:
+  // Read the state of the button
   int buttonState = digitalRead(buttonPin);
- 
-  // Check if the button is pressed, if the button is pressed:
+
+  // If the button is pressed
   if (buttonState == LOW) {
-    // The buzzer sounds with a frequency of 200, for a duration of 200 milliseconds
-    tone(pinBuzzer, 200, 200);
+    // While the button remains pressed, keep the buzzer sounding
+    while (buttonState == LOW) {
+      tone(buzzerPin, 200);   // Make the buzzer sound at 200Hz
+      delay(10);              // Small delay to avoid CPU overload; can be adjusted or a more sophisticated debouncing method used
+      buttonState = digitalRead(buttonPin); // Continuously check the button state within the loop
+    }
+    // When the button is released, ensure the buzzer stops
+    noTone(buzzerPin);
   }
 }
